@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,10 +34,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.example.profilecard2.ui.theme.ProfileCard2Theme
 import com.example.profilecard2.ui.theme.lightGreen
 import com.example.profilecard2.ui.theme.teal
@@ -125,11 +123,21 @@ fun ProfilePicture(drawableId: Int, isOnline: Boolean) {
         modifier = Modifier.padding(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
+        /*val painter = rememberAsyncImagePainter(
+            ImageRequest.Builder(LocalContext.current)
+                .data(drawableId)
+                .transformations(CircleCropTransformation())
+                .build()
+        )
         Image(
-            painter = painterResource(id = drawableId),
+            painter = painter,
             modifier = Modifier.size(72.dp),
-            contentScale = ContentScale.Crop,
             contentDescription = "Profile image",
+        )*/
+        AsyncImage(
+            model = drawableId,
+            contentDescription = "Profile image",
+            modifier = Modifier.size(72.dp),
         )
     }
 }
