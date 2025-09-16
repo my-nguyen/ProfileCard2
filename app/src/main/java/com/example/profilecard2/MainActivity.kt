@@ -15,21 +15,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.profilecard2.ui.theme.ProfileCard2Theme
 import com.example.profilecard2.ui.theme.lightGreen
+import com.example.profilecard2.ui.theme.teal
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,9 +54,32 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
-    Surface(modifier = Modifier.fillMaxSize()) {
-        ProfileCard()
+    Scaffold(topBar = { AppBar() }) { padding ->
+        Surface(modifier = Modifier.fillMaxSize().padding(padding)) {
+            ProfileCard()
+        }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppBar() {
+    TopAppBar(
+        title = { Text("User profiles") },
+        navigationIcon = {
+            Icon(
+                Icons.Default.Home,
+                contentDescription = "Home",
+                Modifier.padding(horizontal = 12.dp)
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = teal, // Set the background color of the TopAppBar
+            titleContentColor = Color.White, // Set the color of the title text
+            actionIconContentColor = Color.White, // Set the color of action icons
+            navigationIconContentColor = Color.White // Set the color of the navigation icon
+        )
+    )
 }
 
 @Composable
@@ -89,9 +121,11 @@ fun ProfilePicture() {
 
 @Composable
 fun ProfileContent() {
-    Column(modifier = Modifier
-        .padding(8.dp)
-        .fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+    ) {
         Text(text = "Ken Wanatabe", style = MaterialTheme.typography.headlineSmall)
         Text(
             text = "Active now",

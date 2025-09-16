@@ -14,6 +14,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val veryLightGray = Color(0x60DCDCDC)
 val lightGreen200 = Color(0x9932CD32)
+val teal = Color(0xFF03DAC5)
 
 val ColorScheme.lightGreen: Color
     @Composable
