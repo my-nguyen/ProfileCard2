@@ -54,12 +54,17 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(profiles: List<UserProfile> = userProfiles) {
     Scaffold(topBar = { AppBar() }) { padding ->
-        Surface(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
             Column {
-                ProfileCard()
-                ProfileCard()
+                for (profile in profiles) {
+                    ProfileCard(profile)
+                }
             }
         }
     }
@@ -87,7 +92,7 @@ fun AppBar() {
 }
 
 @Composable
-fun ProfileCard() {
+fun ProfileCard(profile: UserProfile) {
     Card(
         modifier = Modifier
             .padding(top = 4.dp, bottom = 4.dp, start = 16.dp, end = 16.dp)
@@ -101,22 +106,25 @@ fun ProfileCard() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            ProfilePicture()
-            ProfileContent()
+            ProfilePicture(profile.drawableId, profile.isOnline)
+            ProfileContent(profile.name, profile.isOnline)
         }
     }
 }
 
 @Composable
-fun ProfilePicture() {
+fun ProfilePicture(drawableId: Int, isOnline: Boolean) {
     Card(
         shape = CircleShape,
-        border = BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.lightGreen),
+        border = BorderStroke(
+            width = 2.dp,
+            color = if (isOnline) MaterialTheme.colorScheme.lightGreen else Color.Red
+        ),
         modifier = Modifier.padding(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.profile),
+            painter = painterResource(id = drawableId),
             modifier = Modifier.size(72.dp),
             contentScale = ContentScale.Crop,
             contentDescription = "Profile image",
@@ -125,15 +133,18 @@ fun ProfilePicture() {
 }
 
 @Composable
-fun ProfileContent() {
+fun ProfileContent(username: String, isOnline: Boolean) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
     ) {
-        Text(text = "Ken Wanatabe", style = MaterialTheme.typography.headlineSmall)
         Text(
-            text = "Active now",
+            text = username, style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.alpha(if (isOnline) 1f else 0.5f)
+        )
+        Text(
+            text = if (isOnline) "Active now" else "Offline",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.alpha(0.5f)
         )
