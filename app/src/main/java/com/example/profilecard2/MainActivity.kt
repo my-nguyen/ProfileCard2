@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
@@ -61,9 +63,9 @@ fun MainScreen(profiles: List<UserProfile> = userProfiles) {
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            Column {
-                for (profile in profiles) {
-                    ProfileCard(profile)
+            LazyColumn {
+                items(items = profiles) {
+                    ProfileCard(profile = it)
                 }
             }
         }
