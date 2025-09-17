@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -72,14 +74,19 @@ fun Application(profiles: List<UserProfile> = userProfiles) {
             route = "detail_screen/{userId}",
             arguments = listOf(navArgument("userId") { type = NavType.IntType })
         ) { backstackEntry ->
-            DetailScreen(backstackEntry.arguments!!.getInt("userId"))
+            DetailScreen(backstackEntry.arguments!!.getInt("userId"), navController)
         }
     }
 }
 
 @Composable
 fun MainScreen(profiles: List<UserProfile>, navController: NavHostController?) {
-    Scaffold(topBar = { AppBar() }) { padding ->
+    Scaffold(topBar = {
+        AppBar(
+            title = "User profiles",
+            icon = Icons.Default.Home
+        ) { }
+    }) { padding ->
         Surface(modifier = Modifier
             .fillMaxSize()
             .padding(padding)) {
@@ -95,9 +102,16 @@ fun MainScreen(profiles: List<UserProfile>, navController: NavHostController?) {
 }
 
 @Composable
-fun DetailScreen(userId: Int) {
+fun DetailScreen(userId: Int, navController: NavHostController?) {
     val profile = userProfiles.first { it.id == userId }
-    Scaffold(topBar = { AppBar() }) { padding ->
+    Scaffold(topBar = {
+        AppBar(
+            title = "User details",
+            icon = Icons.AutoMirrored.Filled.ArrowBack,
+        ) {
+            navController?.navigateUp()
+        }
+    }) { padding ->
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -117,14 +131,16 @@ fun DetailScreen(userId: Int) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBar() {
+fun AppBar(title: String, icon: ImageVector, clickAction: () -> Unit) {
     TopAppBar(
-        title = { Text("User profiles") },
+        title = { Text(title) },
         navigationIcon = {
             Icon(
-                Icons.Default.Home,
+                imageVector = icon,
                 contentDescription = "Home",
-                Modifier.padding(horizontal = 12.dp)
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .clickable(onClick = { clickAction.invoke() })
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -201,7 +217,7 @@ fun ProfileContent(username: String, isOnline: Boolean, alignment: Alignment.Hor
 @Composable
 fun DetailPreview() {
     ProfileCard2Theme {
-        DetailScreen(userId = 0)
+        DetailScreen(userId = 0, navController = null)
     }
 }
 
