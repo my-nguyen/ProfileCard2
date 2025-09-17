@@ -1,12 +1,10 @@
 package com.example.profilecard2
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,15 +34,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import coil3.compose.rememberAsyncImagePainter
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.example.profilecard2.ui.theme.ProfileCard2Theme
 import com.example.profilecard2.ui.theme.lightGreen
 import com.example.profilecard2.ui.theme.teal
@@ -73,6 +66,26 @@ fun MainScreen(profiles: List<UserProfile> = userProfiles) {
                 items(items = profiles) {
                     ProfileCard(profile = it)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun DetailScreen(profile: UserProfile = userProfiles[0]) {
+    Scaffold(topBar = { AppBar() }) { padding ->
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                ProfilePicture(profile.imageUrl, profile.isOnline, 240.dp)
+                ProfileContent(profile.name, profile.isOnline, Alignment.CenterHorizontally)
             }
         }
     }
@@ -114,39 +127,38 @@ fun ProfileCard(profile: UserProfile) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            ProfilePicture(profile.imageUrl, profile.isOnline)
-            ProfileContent(profile.name, profile.isOnline)
+            ProfilePicture(profile.imageUrl, profile.isOnline, 72.dp)
+            ProfileContent(profile.name, profile.isOnline, Alignment.Start)
         }
     }
 }
 
 @Composable
-fun ProfilePicture(imageUrl: String, isOnline: Boolean) {
-    Log.d("Truong", "imageUrl: $imageUrl")
+fun ProfilePicture(imageUrl: String, isOnline: Boolean, size: Dp) {
     Card(
         shape = CircleShape,
         border = BorderStroke(
             width = 2.dp,
             color = if (isOnline) MaterialTheme.colorScheme.lightGreen else Color.Red
         ),
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier
+            .padding(16.dp)
+            .size(size),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         // this doesn't load images
         AsyncImage(
             model = imageUrl,
             contentDescription = "Profile image",
-            modifier = Modifier.size(72.dp),
         )
     }
 }
 
 @Composable
-fun ProfileContent(username: String, isOnline: Boolean) {
+fun ProfileContent(username: String, isOnline: Boolean, alignment: Alignment.Horizontal) {
     Column(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
+        modifier = Modifier.padding(8.dp),
+        horizontalAlignment = alignment
     ) {
         Text(
             text = username, style = MaterialTheme.typography.headlineSmall,
@@ -162,7 +174,15 @@ fun ProfileContent(username: String, isOnline: Boolean) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun DetailPreview() {
+    ProfileCard2Theme {
+        DetailScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainPreview() {
     ProfileCard2Theme {
         MainScreen()
     }
