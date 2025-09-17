@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import com.example.profilecard2.ui.theme.ProfileCard2Theme
 import com.example.profilecard2.ui.theme.lightGreen
@@ -48,23 +53,34 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ProfileCard2Theme {
-                MainScreen()
+                Application()
             }
         }
     }
 }
 
 @Composable
-fun MainScreen(profiles: List<UserProfile> = userProfiles) {
+fun Application(profiles: List<UserProfile> = userProfiles) {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "main_screen") {
+        composable("main_screen") {
+            MainScreen(profiles, navController)
+        }
+        composable("detail_screen") {
+            DetailScreen()
+        }
+    }
+}
+
+@Composable
+fun MainScreen(profiles: List<UserProfile>, navController: NavHostController?) {
     Scaffold(topBar = { AppBar() }) { padding ->
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
+        Surface(modifier = Modifier.fillMaxSize().padding(padding)) {
             LazyColumn {
                 items(items = profiles) {
-                    ProfileCard(profile = it)
+                    ProfileCard(profile = it) {
+                        navController?.navigate("detail_screen")
+                    }
                 }
             }
         }
@@ -113,12 +129,13 @@ fun AppBar() {
 }
 
 @Composable
-fun ProfileCard(profile: UserProfile) {
+fun ProfileCard(profile: UserProfile, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .padding(top = 4.dp, bottom = 4.dp, start = 16.dp, end = 16.dp)
             .fillMaxWidth()
-            .wrapContentHeight(align = Alignment.Top),
+            .wrapContentHeight(align = Alignment.Top)
+            .clickable(onClick = { onClick.invoke() }),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = CutCornerShape(topEnd = 24.dp)
     ) {
@@ -184,6 +201,6 @@ fun DetailPreview() {
 @Composable
 fun MainPreview() {
     ProfileCard2Theme {
-        MainScreen()
+        MainScreen(userProfiles, null)
     }
 }
