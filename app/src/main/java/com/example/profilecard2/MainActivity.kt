@@ -39,9 +39,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import coil3.compose.AsyncImage
 import com.example.profilecard2.ui.theme.ProfileCard2Theme
 import com.example.profilecard2.ui.theme.lightGreen
@@ -66,8 +68,11 @@ fun Application(profiles: List<UserProfile> = userProfiles) {
         composable("main_screen") {
             MainScreen(profiles, navController)
         }
-        composable("detail_screen") {
-            DetailScreen()
+        composable(
+            route = "detail_screen/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.IntType })
+        ) { backstackEntry ->
+            DetailScreen(backstackEntry.arguments!!.getInt("userId"))
         }
     }
 }
@@ -75,11 +80,13 @@ fun Application(profiles: List<UserProfile> = userProfiles) {
 @Composable
 fun MainScreen(profiles: List<UserProfile>, navController: NavHostController?) {
     Scaffold(topBar = { AppBar() }) { padding ->
-        Surface(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Surface(modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)) {
             LazyColumn {
-                items(items = profiles) {
-                    ProfileCard(profile = it) {
-                        navController?.navigate("detail_screen")
+                items(items = profiles) { profile ->
+                    ProfileCard(profile = profile) {
+                        navController?.navigate("detail_screen/${profile.id}")
                     }
                 }
             }
@@ -88,7 +95,8 @@ fun MainScreen(profiles: List<UserProfile>, navController: NavHostController?) {
 }
 
 @Composable
-fun DetailScreen(profile: UserProfile = userProfiles[0]) {
+fun DetailScreen(userId: Int) {
+    val profile = userProfiles.first { it.id == userId }
     Scaffold(topBar = { AppBar() }) { padding ->
         Surface(
             modifier = Modifier
@@ -193,7 +201,7 @@ fun ProfileContent(username: String, isOnline: Boolean, alignment: Alignment.Hor
 @Composable
 fun DetailPreview() {
     ProfileCard2Theme {
-        DetailScreen()
+        DetailScreen(userId = 0)
     }
 }
 
